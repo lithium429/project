@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Sms">  
+	<resultMap id="smsResult" type="Sms">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="sender_name" property="sender_name" jdbcType="VARCHAR" />
+		<result column="receiver_name" property="receiver_name" jdbcType="VARCHAR" />
+		<result column="interface_type" property="interface_type" jdbcType="DECIMAL" />
+		<result column="state" property="state" jdbcType="DECIMAL" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="is_retry" property="is_retry" jdbcType="VARCHAR" />
+		<result column="retry_count" property="retry_count" jdbcType="DECIMAL" />
+		<result column="create_time" property="create_time"  />
+    </resultMap>
+
+	<sql id="sf-sms">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="sender_name != null">
+				and a.sender_name = #{sender_name}
+			</if>
+			<if test="receiver_name != null">
+				and a.receiver_name = #{receiver_name}
+			</if>
+			<if test="interface_type != null">
+				and a.interface_type = #{interface_type}
+			</if>
+			<if test="state != null">
+				and a.state = #{state}
+			</if>
+			<if test="phone != null">
+				and a.phone = #{phone}
+			</if>
+			<if test="content != null">
+				and a.content = #{content}
+			</if>
+			<if test="is_retry != null">
+				and a.is_retry = #{is_retry}
+			</if>
+			<if test="retry_count != null">
+				and a.retry_count = #{retry_count}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.receiver_name != null">
+				and a.receiver_name like concat('%',#{map.receiver_name},'%')
+			</if>
+			<if test="map.not_state != null">
+				and a.state != 0
+			</if>
+			<if test="map.sender_name != null">
+				and a.sender_name like concat('%',#{map.sender_name},'%')
+			</if>
+			<if test="map.phone != null">
+				and a.phone like concat('%',#{map.phone},'%')
+			</if>
+			<if test="map.create_time_min != null">
+				and a.create_time >= #{map.create_time_min}
+			</if>
+			<if test="map.create_time_max != null">
+				and #{map.create_time_max} >= a.create_time
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectSms" resultType="Sms" parameterType="Sms">
+		select a.* from sms a
+		<include refid="sf-sms" />
+	</select>
+	
+	<select id="selectSmsList" resultType="Sms" parameterType="Sms">
+		select a.* from sms a
+		<include refid="sf-sms" />
+	</select>
+	
+	<select id="selectSmsCount" resultType="int" parameterType="Sms">
+		select count(1) from sms a
+		<include refid="sf-sms" />
+	</select>
+	
+	<select id="selectSmsPageList" resultType="Sms" parameterType="Sms">
+		select a.* from sms a
+		<include refid="sf-sms" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectSmsSort" resultType="int" parameterType="Sms">
+		select max(a.id) from sms a
+		<include refid="sf-sms" />
+	</select>
+
+	<insert id="insertSms" parameterType="Sms" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into sms (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="sender_name != null">sender_name,</if> 
+			<if test="receiver_name != null">receiver_name,</if> 
+			<if test="interface_type != null">interface_type,</if> 
+			<if test="state != null">state,</if> 
+			<if test="phone != null">phone,</if> 
+			<if test="content != null">content,</if> 
+			<if test="is_retry != null">is_retry,</if> 
+			<if test="retry_count != null">retry_count,</if> 
+			<if test="create_time != null">create_time,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="sender_name != null">#{sender_name},</if> 
+			<if test="receiver_name != null">#{receiver_name},</if> 
+			<if test="interface_type != null">#{interface_type},</if> 
+			<if test="state != null">#{state},</if> 
+			<if test="phone != null">#{phone},</if> 
+			<if test="content != null">#{content},</if> 
+			<if test="is_retry != null">#{is_retry},</if> 
+			<if test="retry_count != null">#{retry_count},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateSms" parameterType="Sms">
+		update sms
+		<set>
+			<if test="sender_name != null">sender_name=#{sender_name},</if>
+			<if test="receiver_name != null">receiver_name=#{receiver_name},</if>
+			<if test="interface_type != null">interface_type=#{interface_type},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="phone != null">phone=#{phone},</if>
+			<if test="content != null">content=#{content},</if>
+			<if test="is_retry != null">is_retry=#{is_retry},</if>
+			<if test="retry_count != null">retry_count=#{retry_count},</if>
+			<if test="map.haddle_retry_count != null">retry_count=retry_count+1,</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteSms" parameterType="Sms">
+		delete from sms 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

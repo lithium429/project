@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Department">  
+	<resultMap id="departmentResult" type="Department">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="DECIMAL" />
+		<result column="parent_id" property="parent_id" jdbcType="DECIMAL" />
+		<result column="layer" property="layer" jdbcType="DECIMAL" />
+		<result column="is_leaf" property="is_leaf" jdbcType="DECIMAL" />
+		<result column="create_time" property="create_time" jdbcType="DATE" />
+		<result column="acount" property="acount" jdbcType="DECIMAL" />
+		<result column="type" property="type" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<sql id="sf-department">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="code != null">
+				and a.code = #{code}
+			</if>
+			<if test="sort != null">
+				and a.sort = #{sort}
+			</if>
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="parent_id != null">
+				and a.parent_id = #{parent_id}
+			</if>
+			<if test="layer != null">
+				and a.layer = #{layer}
+			</if>
+			<if test="is_leaf != null">
+				and a.is_leaf = #{is_leaf}
+			</if>
+			<if test="acount != null">
+				and a.acount = #{acount}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.code_key != null">
+				and (a.code like concat('%',#{map.code_key},'%') or a.name like concat('%',#{map.code_key},'%'))
+			</if>
+			<if test="map.acount_max != null">
+				and a.acount > 0
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectDepartment" resultType="Department" parameterType="Department">
+		select a.* from department a
+		<include refid="sf-department" />
+	</select>
+	
+	<select id="selectDepartmentForIdUrl" resultType="Department" parameterType="Department">
+		select a.* from department a
+		<include refid="sf-department" />
+	</select>
+	
+	<select id="selectDepartmentList" resultType="Department" parameterType="Department">
+		select a.* from department a
+		<include refid="sf-department" />
+	</select>
+	
+	<select id="selectDepartmentCount" resultType="int" parameterType="Department">
+		select count(1) from department a
+		<include refid="sf-department" />
+	</select>
+	
+	<select id="selectDepartmentPageList" resultType="Department" parameterType="Department">
+		select a.* from department a
+		<include refid="sf-department" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectDepartmentSort" resultType="int" parameterType="Department">
+		select max(a.sort) from department a
+		<include refid="sf-department" />
+	</select>
+	
+	<select id="selectDepartmentListByAddress" resultType="Department" parameterType="Department">
+		select b.dept_id as id,count(b.dept_id) as acount from address a left join user b on a.user_id=b.id  where a.type=1 and a.user_id is not null group by b.dept_id 
+	</select>
+
+	<insert id="insertDepartment" parameterType="Department" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into department (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="code != null">code,</if> 
+			<if test="sort != null">sort,</if> 
+			<if test="parent_id != null">parent_id,</if> 
+			<if test="layer != null">layer,</if>
+			<if test="is_leaf != null">is_leaf,</if> 
+			<if test="create_time != null">create_time,</if> 
+			<if test="acount != null">acount,</if> 
+			<if test="type != null">type,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="code != null">#{code},</if> 
+			<if test="sort != null">#{sort},</if> 
+			<if test="parent_id != null">#{parent_id},</if> 
+			<if test="layer != null">#{layer},</if>
+			<if test="is_leaf != null">#{is_leaf},</if>  
+			<if test="create_time != null">#{create_time},</if> 
+			<if test="acount != null">#{acount},</if> 
+			<if test="type != null">#{type},</if>
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateDepartment" parameterType="Department">
+		update department
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="code != null">code=#{code},</if>
+			<if test="sort != null">sort=#{sort},</if>
+			<if test="parent_id != null">parent_id=#{parent_id},</if>
+			<if test="layer != null">layer=#{layer},</if>
+			<if test="is_leaf != null">is_leaf=#{is_leaf},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="acount != null">acount=#{acount},</if>
+			<if test="map.acount_val != null">acount=acount+#{map.acount_val},</if>
+			<if test="type != null">type=#{type},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteDepartment" parameterType="Department">
+		delete from department 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

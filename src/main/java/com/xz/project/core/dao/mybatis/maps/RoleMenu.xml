@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.RoleMenu">  
+	<resultMap id="roleMenuResult" type="RoleMenu">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="role_id" property="role_id" jdbcType="DECIMAL" />
+		<result column="menu_id" property="menu_id" jdbcType="DECIMAL" />
+		<result column="action_id" property="action_id" jdbcType="DECIMAL" />
+		<result column="is_action" property="is_action" jdbcType="VARCHAR" />
+		
+		<association property="menu" javaType="Menu" resultMap="roleMenuMenuResult"></association>
+    </resultMap>
+    
+    <resultMap id="roleMenuMenuResult" type="Menu">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parent_id" jdbcType="DECIMAL" />
+		<result column="is_leaf" property="is_leaf" jdbcType="VARCHAR" />
+		<result column="layer" property="layer" jdbcType="DECIMAL" />
+		<result column="sort" property="sort" jdbcType="DECIMAL" />
+		<result column="child_ids" property="child_ids" jdbcType="VARCHAR" />
+		<result column="icon_class" property="icon_class" jdbcType="VARCHAR" /> 
+		<result column="is_enable" property="is_enable" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="DATE" />  
+	</resultMap>
+
+	<sql id="sf-roleMenu">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="role_id != null">
+				and a.role_id = #{role_id}
+			</if>
+			<if test="menu_id != null">
+				and a.menu_id = #{menu_id}
+			</if>
+			<if test="action_id != null">
+				and a.action_id = #{action_id}
+			</if>
+			<if test="is_action != null">
+				and a.is_action = #{is_action}
+			</if>
+			<if test="map.user_id != null">
+				and a.user_id = #{map.user_id} 
+			</if>
+			<if test="map.my_id != null">
+				and b.user_id = #{map.my_id} 
+			</if>
+			<if test="map.menu_id_l != null">
+				and c.menu_id = #{map.menu_id_l} 
+			</if>
+			<if test="map.is_enable != null">
+				and b.is_enable = 1
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectRoleMenu" resultType="RoleMenu" parameterType="RoleMenu">
+		select a.* from role_menu a
+		<include refid="sf-roleMenu" />
+	</select>
+	
+	<select id="selectRoleMenuList" resultType="RoleMenu" parameterType="RoleMenu">
+		select a.* from role_menu a
+		<include refid="sf-roleMenu" />
+	</select>
+	
+	<select id="selectRoleMenuList_power" resultType="RoleMenu" parameterType="RoleMenu">
+		SELECT c.name as action_name from role_menu a left join user_role b on a.role_id=b.role_id
+	    left join action c on a.action_id=c.id <include refid="sf-roleMenu" />
+		GROUP BY a.action_id
+	</select>
+	
+	<select id="selectRoleMenuListByUser" resultMap="roleMenuResult" parameterType="RoleMenu">
+		select a.user_id,b.* from( select DISTINCT b.menu_id,a.user_id from user_role a left join role_menu b on a.role_id = b.role_id and b.is_action = 0) as a left join menu b on a.menu_id = b.id
+		<include refid="sf-roleMenu" />
+		order by b.sort
+	</select>
+	
+	<select id="selectRoleMenuCount" resultType="int" parameterType="RoleMenu">
+		select count(1) from role_menu a
+		<include refid="sf-roleMenu" />
+	</select>
+	
+	<select id="selectRoleMenuPageList" resultType="RoleMenu" parameterType="RoleMenu">
+		select a.* from role_menu a
+		<include refid="sf-roleMenu" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectRoleMenuSort" resultType="int" parameterType="RoleMenu">
+		select max(a.id) from role_menu a
+		<include refid="sf-roleMenu" />
+	</select>
+
+	<insert id="insertRoleMenu" parameterType="RoleMenu" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into role_menu (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="role_id != null">role_id,</if> 
+			<if test="menu_id != null">menu_id,</if> 
+			<if test="action_id != null">action_id,</if> 
+			<if test="is_action != null">is_action,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="role_id != null">#{role_id},</if> 
+			<if test="menu_id != null">#{menu_id},</if> 
+			<if test="action_id != null">#{action_id},</if> 
+			<if test="is_action != null">#{is_action},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateRoleMenu" parameterType="RoleMenu">
+		update role_menu
+		<set>
+			<if test="role_id != null">role_id=#{role_id},</if>
+			<if test="menu_id != null">menu_id=#{menu_id},</if>
+			<if test="action_id != null">action_id=#{action_id},</if>
+			<if test="is_action != null">is_action=#{is_action},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="role_id != null">
+				and role_id = #{role_id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteRoleMenu" parameterType="RoleMenu">
+		delete from role_menu 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="role_id != null">
+				and role_id = #{role_id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

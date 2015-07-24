@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="activiti.sql">  
+
+   	 <select id="findPassedNode" resultType="java.util.Map" parameterType="java.util.Map">
+	     select ACT_ID_,ACT_NAME_ from ACT_HI_ACTINST where  
+	 		ACT_TYPE_='userTask' AND END_TIME_ is not null AND PROC_INST_ID_=#{pid} 
+	 </select>
+	 
+	 <update id="modifyActinst" parameterType="java.util.Map">
+	     update ACT_HI_ACTINST set end_time_=#{endTime},duration_=#{duration} where task_id_=#{taskId}
+	 </update>
+	 
+	 <select id="findAllActivitywh" resultType="com.xz.activiti.modules.pojo.Wf_hi_activity">
+	     select * from wf_hi_activity
+	 </select>
+	 
+	 <delete id="removeActiwh" parameterType="int">
+	     delect from wf_hi_activity where id=#{id}
+	 </delete>
+	 
+	 <select id="findRuTaskByCon" parameterType="java.util.Map" resultType="string">
+	     select id_ from act_ru_task where EXECUTION_ID_=#{executionId} and PROC_INST_ID_=#{procInstID} and PROC_DEF_ID_=#{procDefId} and TASK_DEF_KEY_=#{taskDefKey}
+	 </select>
+	 
+	 <delete id="removeRuTaskById" parameterType="int">
+	     delete from act_ru_task where id_=#{taskId}
+	 </delete>
+	 
+	 <delete id="removeHiActinst" parameterType="java.util.Map">
+		delete from act_hi_actinst where PROC_INST_ID_=#{procInstId} and task_id_=#{taskId}     
+	 </delete>
+	 
+	 <select id="findHiTaInByCon" parameterType="java.util.Map" resultType="java.lang.String">
+	     SELECT id_ FROM act_hi_taskinst WHERE TASK_DEF_KEY_=#{taskDefKey} AND PROC_INST_ID_=#{procInstId} AND END_TIME_ IS NOT NULL ORDER BY END_TIME_ DESC LIMIT 0,1
+	 </select>
+	 
+	 <select id="findHiActinstByTaskId" parameterType="java.lang.String" resultType="java.lang.String">
+	     select id_ from ACT_HI_ACTINST where task_id_=#{taskId}
+	 </select>
+	 
+	 <select id="findHainstById" parameterType="java.lang.String" resultType="java.lang.String">
+	     select task_id_ from ACT_HI_ACTINST where id_=#{historyActivityId}
+	 </select>
+	 
+	 <select id="findHainstPartById" parameterType="java.lang.String" resultType="java.util.Map">
+	     select act_id_,task_id_ from ACT_HI_ACTINST where id_=#{id}
+	 </select>
+	 
+	 <select id="findCategorywf" resultType="com.xz.activiti.modules.pojo.Wf_model_category" >
+	     select * from wf_model_category order by location asc
+	 </select>
+	 
+	 <select id="findCateMaxLaById" parameterType="java.lang.String" resultType="java.lang.String">
+	     select max(location)+1 from Wf_model_category where id like CONCAT(#{id},"%")
+	 </select>
+	 
+	 <insert id="createCate" parameterType="com.xz.activiti.modules.pojo.Wf_model_category">
+	     insert into Wf_model_category (id,name,location) values (#{id},#{name},#{location})
+	 </insert>
+	 
+	 <update id="modifyCateById" parameterType="java.util.Map">
+	     update wf_model_category set name=#{name} where id=#{categoryId}
+	 </update>
+	 
+	 <delete id="removeCateById" parameterType="java.lang.String">
+	     delete from wf_model_category where id=#{id}
+	 </delete>
+	 
+	 <update id="modifyArModelById" parameterType="java.lang.String">
+	     update act_re_model set CATEGORY_='' where CATEGORY_=#{id}
+	 </update>
+	 
+	 <insert id="createActiwf" parameterType="com.xz.activiti.modules.pojo.Wf_hi_activity">
+	     insert into wf_hi_activity(processInstanceId,processDefinitionId,executionId,nowActivityId,nextActivityId,jsonInfo,isAfter) values
+	     	(#{processInstanceId},#{processDefinitionId},#{executionId},#{nowActivityId},#{nextActivityId},#{jsonInfo},#{isAfter})
+	 </insert>
+	 
+	 <select id="findHiActinstByCon" parameterType="java.lang.String" resultType="java.util.Map">
+	     select * from ACT_HI_ACTINST where task_id_=#{id} and end_time_ is null
+	 </select>
+	 
+	 <update id="modifyHiAcinst" parameterType="java.util.Map">
+	     update ACT_HI_ACTINST set end_time_=#{endtime},duration_=#{duration} where id_=#{id}
+	 </update>
+	 
+	 <select id="findHiActinstByProID" parameterType="java.lang.String" resultType="java.util.Map">
+	     select * from ACT_HI_ACTINST where proc_inst_id_=#{id} and end_time_ is null
+	 </select>
+	 
+	 <delete id="removeArexecByCon" parameterType="java.util.Map">
+	     delete from act_ru_execution where PROC_INST_ID_=#{procInstId} and PARENT_ID_=#{parentId} and ACT_ID_=#{actId}
+	 </delete>
+
+	<select id="findRoleListByUser" parameterType="java.lang.String" resultType="com.xz.project.core.domain.entity.Role">
+		SELECT a.* FROM role a,user_role b WHERE a.id=b.role_id AND b.user_id=#{id}
+	</select>
+
+	<select id="findCateById" parameterType="java.lang.String" resultType="com.xz.activiti.modules.pojo.Wf_model_category">
+		SELECT * from wf_model_category where id=#{id}
+	</select>
+
+	<select id="findArtaskCount" parameterType="java.util.Map" resultType="int">
+		select count(1) from act_ru_task where CATEGORY_=#{category} and ASSIGNEE_=#{userId} OR ASSIGNEE_ IN
+			<foreach collection="terList" item="item" separator="," open="(" close=")">
+				CONCAT('ROLE(',#{item},')')
+			</foreach>
+	</select>
+
+	<update id="modifyAhactinst" parameterType="java.util.Map">
+		update act_hi_actinst set END_TIME_=START_TIME_,DURATION_=0 where EXECUTION_ID_=#{execId} and act_id_=#{actId} and END_TIME_ is null
+	</update>
+
+	<select id="findCateIdFuzzy" parameterType="java.lang.String" resultType="java.lang.String">
+		select id from Wf_model_category where id like CONCAT ('%',#{id},'____%')order by id desc limit 1
+	</select>
+
+	<select id="findCateMaxId" resultType="java.lang.String">
+		select MAX(id) from Wf_model_category where id like '____'
+	</select>
+</mapper>

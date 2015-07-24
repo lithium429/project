@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Menu">
+	<resultMap id="menuResult" type="Menu">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parent_id" jdbcType="DECIMAL" />
+		<result column="is_leaf" property="is_leaf" jdbcType="VARCHAR" />
+		<result column="layer" property="layer" jdbcType="DECIMAL" />
+		<result column="sort" property="sort" jdbcType="DECIMAL" />
+		<result column="child_ids" property="child_ids" jdbcType="VARCHAR" />
+		<result column="is_enable" property="is_enable" jdbcType="VARCHAR" />
+		<result column="icon_class" property="icon_class" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="DATE" /> 
+		<collection property="actions" resultMap="menuActionResult" />
+	</resultMap>
+
+	<resultMap id="menuActionResult" type="Action">
+		<result column="action_id" property="id" jdbcType="DECIMAL" />
+		<result column="action_name" property="name" jdbcType="VARCHAR" />
+		<result column="action_sort" property="sort" jdbcType="DECIMAL" />
+		<result column="menu_id" property="menu_id" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<sql id="sf-menu">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="url != null">
+				and a.url = #{url}
+			</if>
+			<if test="parent_id != null">
+				and a.parent_id = #{parent_id}
+			</if>
+			<if test="is_leaf != null">
+				and a.is_leaf = #{is_leaf}
+			</if>
+			<if test="layer != null">
+				and a.layer = #{layer}
+			</if>
+			<if test="sort != null">
+				and a.sort = #{sort}
+			</if>
+			<if test="child_ids != null">
+				and a.child_ids = #{child_ids}
+			</if>
+			<if test="is_enable != null">
+				and a.is_enable = #{is_enable}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="map.url_valid != null">
+				and a.id !=#{map.id} and a.url =#{map.url}
+			</if>
+			<if test="map.sort_valid != null">
+				and a.id !=#{map.id} and a.sort =#{map.sort}
+			</if>
+			<if test="map.sort_max_valid != null">
+				and a.id !=#{map.id} and a.sort >= #{map.sort}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.layer_not != null">
+				and a.layer != #{map.layer_not}
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort_s != null">
+			order by a.sort
+		</if>
+	</sql>
+
+	<select id="selectMenu" resultType="Menu" parameterType="Menu">
+		select a.* from menu a
+		<include refid="sf-menu" />
+	</select>
+
+	<select id="selectMenuList" resultType="Menu" parameterType="Menu">
+		select a.* from menu a
+		<include refid="sf-menu" />
+	</select>
+
+	<select id="selectMenuList1" resultMap="menuResult" parameterType="Menu"> 
+		select a.*,b.id as action_id,b.name as action_name,b.sort as action_sort,b.menu_id 
+		from menu a left join action b on a.id=b.menu_id 
+		<include refid="sf-menu" />
+	</select>
+
+	<select id="selectMenuCount" resultType="int" parameterType="Menu">
+		select count(1) from menu a
+		<include refid="sf-menu" />
+	</select>
+
+	<select id="selectMenuPageList" resultType="Menu" parameterType="Menu">
+		select a.* from menu a
+		<include refid="sf-menu" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+
+	<select id="selectMenuSort" resultType="int" parameterType="Menu">
+		select max(a.sort) from menu a
+		<include refid="sf-menu" />
+	</select>
+
+	<insert id="insertMenu" parameterType="Menu" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into menu (]]>
+		<trim suffixOverrides=",">
+			<if test="id != null">id,</if>
+			<if test="name != null">name,</if>
+			<if test="url != null">url,</if>
+			<if test="parent_id != null">parent_id,</if>
+			<if test="is_leaf != null">is_leaf,</if>
+			<if test="layer != null">layer,</if>
+			<if test="sort != null">sort,</if>
+			<if test="child_ids != null">child_ids,</if>
+			<if test="is_enable != null">is_enable,</if>
+			<if test="icon_class != null">icon_class,</if>
+			<if test="create_time != null">create_time,</if>
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">
+			<if test="id != null">#{id},</if>
+			<if test="name != null">#{name},</if>
+			<if test="url != null">#{url},</if>
+			<if test="parent_id != null">#{parent_id},</if>
+			<if test="is_leaf != null">#{is_leaf},</if>
+			<if test="layer != null">#{layer},</if>
+			<if test="sort != null">#{sort},</if>
+			<if test="child_ids != null">#{child_ids},</if>
+			<if test="is_enable != null">#{is_enable},</if>
+			<if test="icon_class != null">#{icon_class},</if>
+			<if test="create_time != null">#{create_time},</if>
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateMenu" parameterType="Menu">
+		update menu
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="url != null">url=#{url},</if>
+			<if test="parent_id != null">parent_id=#{parent_id},</if>
+			<if test="is_leaf != null">is_leaf=#{is_leaf},</if>
+			<if test="layer != null">layer=#{layer},</if>
+			<if test="sort != null">sort=#{sort},</if>
+			<if test="child_ids != null">child_ids=#{child_ids},</if>
+			<if test="is_enable != null">is_enable=#{is_enable},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="icon_class != null">icon_class=#{icon_class},</if>
+			<if test="map.sort_max_valid != null">sort=sort+1,</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+			<if test="map.sort_max_valid != null">
+				and id !=#{map.id} and sort <![CDATA[>]]>=
+				#{map.sort}
+			</if>
+		</where>
+	</update>
+
+	<delete id="deleteMenu" parameterType="Menu">
+		delete from menu
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

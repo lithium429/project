@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.SmsTemplate">  
+	<resultMap id="smsTemplateResult" type="SmsTemplate">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time"  />
+		<result column="is_default" property="is_default" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<sql id="sf-smsTemplate">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="is_default != null">
+				and a.is_default = #{is_default}
+			</if>
+			<if test="content != null">
+				and a.content = #{content}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.name_valid != null">
+				and a.id !=#{map.id} and a.name =#{map.name_valid}
+			</if>
+			<if test="map.name != null">
+				and a.name like concat('%',#{map.name},'%')
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectSmsTemplate" resultType="SmsTemplate" parameterType="SmsTemplate">
+		select a.* from sms_templet a
+		<include refid="sf-smsTemplate" />
+	</select>
+	
+	<select id="selectSmsTemplateList" resultType="SmsTemplate" parameterType="SmsTemplate">
+		select a.* from sms_templet a
+		<include refid="sf-smsTemplate" />
+	</select>
+	
+	<select id="selectSmsTemplateCount" resultType="int" parameterType="SmsTemplate">
+		select count(1) from sms_templet a
+		<include refid="sf-smsTemplate" />
+	</select>
+	
+	<select id="selectSmsTemplatePageList" resultType="SmsTemplate" parameterType="SmsTemplate">
+		select a.* from sms_templet a
+		<include refid="sf-smsTemplate" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectSmsTemplateSort" resultType="int" parameterType="SmsTemplate">
+		select max(a.id) from sms_templet a
+		<include refid="sf-smsTemplate" />
+	</select>
+
+	<insert id="insertSmsTemplate" parameterType="SmsTemplate" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into sms_templet (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="create_time != null">create_time,</if> 
+			<if test="is_default != null">is_default,</if> 
+			<if test="content != null">content,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+			<if test="is_default != null">#{is_default},</if> 
+			<if test="content != null">#{content},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateSmsTemplate" parameterType="SmsTemplate">
+		update sms_templet
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="is_default != null">is_default=#{is_default},</if>
+			<if test="content != null">content=#{content},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.sel_is_default != null">
+				and is_default = 1
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteSmsTemplate" parameterType="SmsTemplate">
+		delete from sms_templet 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Company">  
+	<resultMap id="companyResult" type="Company">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="fax" property="fax" jdbcType="VARCHAR" />
+		<result column="zip_code" property="zip_code" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="site" property="site" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="info" property="info" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<sql id="sf-company">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="phone != null">
+				and a.phone = #{phone}
+			</if>
+			<if test="fax != null">
+				and a.fax = #{fax}
+			</if>
+			<if test="zip_code != null">
+				and a.zip_code = #{zip_code}
+			</if>
+			<if test="address != null">
+				and a.address = #{address}
+			</if>
+			<if test="site != null">
+				and a.site = #{site}
+			</if>
+			<if test="email != null">
+				and a.email = #{email}
+			</if>
+			<if test="info != null">
+				and a.info = #{info}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectCompany" resultType="Company" parameterType="Company">
+		select a.* from company a
+		<include refid="sf-company" />
+	</select>
+	
+	<select id="selectCompanyList" resultType="Company" parameterType="Company">
+		select a.* from company a
+		<include refid="sf-company" />
+	</select>
+	
+	<select id="selectCompanyCount" resultType="int" parameterType="Company">
+		select count(1) from company a
+		<include refid="sf-company" />
+	</select>
+	
+	<select id="selectCompanyPageList" resultType="Company" parameterType="Company">
+		select a.* from company a
+		<include refid="sf-company" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectCompanySort" resultType="int" parameterType="Company">
+		select max(a.id) from company a
+		<include refid="sf-company" />
+	</select>
+
+	<insert id="insertCompany" parameterType="Company" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into company (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="phone != null">phone,</if> 
+			<if test="fax != null">fax,</if> 
+			<if test="zip_code != null">zip_code,</if> 
+			<if test="address != null">address,</if> 
+			<if test="site != null">site,</if> 
+			<if test="email != null">email,</if> 
+			<if test="info != null">info,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="phone != null">#{phone},</if> 
+			<if test="fax != null">#{fax},</if> 
+			<if test="zip_code != null">#{zip_code},</if> 
+			<if test="address != null">#{address},</if> 
+			<if test="site != null">#{site},</if> 
+			<if test="email != null">#{email},</if> 
+			<if test="info != null">#{info},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateCompany" parameterType="Company">
+		update company
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="phone != null">phone=#{phone},</if>
+			<if test="fax != null">fax=#{fax},</if>
+			<if test="zip_code != null">zip_code=#{zip_code},</if>
+			<if test="address != null">address=#{address},</if>
+			<if test="site != null">site=#{site},</if>
+			<if test="email != null">email=#{email},</if>
+			<if test="info != null">info=#{info},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteCompany" parameterType="Company">
+		delete from company 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

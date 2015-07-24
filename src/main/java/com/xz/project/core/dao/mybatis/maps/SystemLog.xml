@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.SystemLog">  
+	<resultMap id="systemLogResult" type="SystemLog">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="user_id" property="user_id" jdbcType="DECIMAL" />
+		<result column="module" property="module" jdbcType="DECIMAL" />
+		<result column="operate" property="operate" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time"  />
+    </resultMap>
+
+	<sql id="sf-systemLog">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="user_id != null">
+				and a.user_id = #{user_id}
+			</if>
+			<if test="module != null">
+				and a.module = #{module}
+			</if>
+			<if test="operate != null">
+				and a.operate = #{operate}
+			</if>
+			<if test="content != null">
+				and a.content = #{content}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.content != null">
+				and a.content like concat('%',#{map.content},'%')
+			</if>
+			<if test="map.user_name != null">
+				and b.real_name like concat('%',#{map.user_name},'%')
+			</if>
+			<if test="map.create_time_min != null">
+				and a.create_time >= #{map.create_time_min}
+			</if>
+			<if test="map.create_time_max != null">
+				and #{map.create_time_max} >= a.create_time
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.create_time desc
+		</if>
+	</sql>
+
+	<select id="selectSystemLog" resultType="SystemLog" parameterType="SystemLog">
+		select a.*,b.real_name as user_name from system_log a left join user b on a.user_id=b.id
+		<include refid="sf-systemLog" />
+	</select>
+	
+	<select id="selectSystemLogList" resultType="SystemLog" parameterType="SystemLog">
+		select a.* from system_log a
+		<include refid="sf-systemLog" />
+	</select>
+	
+	<select id="selectSystemLogCount" resultType="int" parameterType="SystemLog">
+		select count(1) from system_log a left join user b on a.user_id=b.id
+		<include refid="sf-systemLog" />
+	</select>
+	
+	<select id="selectSystemLogPageList" resultType="SystemLog" parameterType="SystemLog">
+		select a.*,b.real_name as user_name from system_log a left join user b on a.user_id=b.id
+		<include refid="sf-systemLog" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectSystemLogSort" resultType="int" parameterType="SystemLog">
+		select max(a.id) from system_log a
+		<include refid="sf-systemLog" />
+	</select>
+
+	<insert id="insertSystemLog" parameterType="SystemLog" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into system_log (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="user_id != null">user_id,</if> 
+			<if test="module != null">module,</if> 
+			<if test="operate != null">operate,</if> 
+			<if test="content != null">content,</if> 
+			<if test="create_time != null">create_time,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="user_id != null">#{user_id},</if> 
+			<if test="module != null">#{module},</if> 
+			<if test="operate != null">#{operate},</if> 
+			<if test="content != null">#{content},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateSystemLog" parameterType="SystemLog">
+		update system_log
+		<set>
+			<if test="user_id != null">user_id=#{user_id},</if>
+			<if test="module != null">module=#{module},</if>
+			<if test="operate != null">operate=#{operate},</if>
+			<if test="content != null">content=#{content},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteSystemLog" parameterType="SystemLog">
+		delete from system_log 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

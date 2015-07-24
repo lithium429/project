@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib version="2.0" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>pubfun</short-name>
+	<!-- 定义该标签库的URI -->
+	<uri>http://www.ahjyrj.com/pubfun</uri>
+	<!-- 映射通用函数为EL表达式所用 -->
+	<function>
+		<name>rolePowerSel</name>
+		<function-class>com.xz.project.core.service.security.RoleMenuService</function-class>
+		<function-signature>java.lang.Boolean rolePowerSel(java.util.List, java.lang.Integer, java.lang.Boolean)</function-signature>
+	</function>
+	<function>
+		<name>judgeRoleMenu</name>
+		<function-class>com.xz.project.core.service.security.RoleMenuService</function-class>
+		<function-signature>java.lang.Boolean judgeRoleMenu(java.util.List, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>containsValue</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.Boolean containsValue(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>getDayOfWeek</name>
+		<function-class>com.xz.base.utils.DateUtil</function-class>
+		<function-signature>java.lang.Integer getDayOfWeek(java.lang.Integer, java.lang.Integer, java.lang.Integer)</function-signature>
+	</function>
+	<function>
+		<name>getDayOfWeekForText</name>
+		<function-class>com.xz.base.utils.DateUtil</function-class>
+		<function-signature>java.lang.String getDayOfWeekForText(java.lang.Integer, java.lang.Integer, java.lang.Integer)</function-signature>
+	</function>  
+	<function>
+		<name>buildTreeName</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String buildTreeName(java.lang.String, java.lang.Integer)</function-signature>
+	</function>
+	<function>
+		<name>gainSpecifiedElement</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String gainSpecifiedElement(java.lang.String, java.lang.String, java.lang.Integer)</function-signature>
+	</function>
+	<function>
+		<name>getConcat_value</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String getConcat_value(java.lang.Integer,java.lang.String,java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>paddingSpace</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String paddingSpace(java.lang.Integer)</function-signature>
+	</function>
+	<function>
+		<name>subString</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String subString(java.lang.String,java.lang.Integer)</function-signature>
+	</function>
+	<function>
+		<name>formatDecimal</name>
+		<function-class>com.xz.base.utils.FormatHelper</function-class>
+		<function-signature>java.lang.Boolean formatDecimal(java.lang.Double)</function-signature>
+	</function>
+	<function>
+		<name>toJson</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.String toJson(java.lang.Object)</function-signature>
+	</function>
+	<function>
+		<name>isBlank</name>
+		<function-class>com.xz.base.utils.StringUtil</function-class>
+		<function-signature>java.lang.Boolean isBlank(java.lang.String)</function-signature>
+	</function>
+	<function>
+	    <name>dateToStr</name>
+	    <function-class>com.xz.base.utils.DateUtil</function-class>
+	    <function-signature>java.lang.String dateToStr(java.util.Date,java.lang.String)</function-signature>
+	</function>
+</taglib>

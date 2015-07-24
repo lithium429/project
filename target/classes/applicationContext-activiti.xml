@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd"
+	default-lazy-init="true">
+
+	
+	<!-- activiti bean  -->
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">  
+	    <property name="dataSource" ref="defaultDataSource" />  
+	    <property name="transactionManager" ref="transactionManager" />  
+	    <property name="databaseSchemaUpdate" value="true" />  
+	    <property name="mailServerHost" value="localhost" />  
+	    <property name="mailServerPort" value="5025" />  
+	    <property name="jpaHandleTransaction" value="true" />  
+	    <property name="jpaCloseEntityManager" value="true" />  
+	    <property name="jobExecutorActivate" value="false" />  
+		<property name="idGenerator" ref="uuidGenerator"/>
+		<!-- 生成流程图的字体 -->
+		<property name="activityFontName" value="宋体"/>
+		<property name="labelFontName" value="宋体"/>
+
+	    <property name="customSessionFactories">
+	        <list>
+	            <bean class="com.xz.activiti.ext.CustomUserEntityManagerFactory">
+	                 <property name="userEntityManager">
+	                    <bean class="com.xz.activiti.ext.CustomUserEntityManager">
+						</bean>
+	                </property> 
+	            </bean>
+	            <bean class="com.xz.activiti.ext.CustomGroupEntityManagerFactory">
+	                <property name="groupEntityManager">
+	                    <bean class="com.xz.activiti.ext.CustomGroupEntityManager"></bean>
+	                </property> 
+	            </bean>
+	        </list>
+	    </property>
+	    <!-- 添加的自定义监听器 -->
+ 		<property name="customDefaultBpmnParseHandlers">
+    	 	<list>
+				<bean class="com.xz.activiti.listener.ProxyUserTaskBpmnParseHandler">
+					<property name="taskListenerId" value="customTaskListener"/>
+					<property name="useDefaultUserTaskParser" value="true"/>
+				</bean>
+    	 	</list>
+		</property>
+ 		<property name="postBpmnParseHandlers">
+    	 	<list>
+				<bean class="com.xz.activiti.listener.ProxyUserTaskBpmnParseHandler">
+					<property name="taskListenerId" value="postTaskListener"/>
+				</bean>
+    	 	</list>
+		</property>
+
+		<property name="bpmnParser">
+			<bean class="com.xz.activiti.parser.CustomBpmnParser" />
+		</property>
+	 </bean>
+
+	<!-- 在记录history之前执行的TaskListener -->
+	<bean id="customTaskListener" class="com.xz.activiti.listener.ProxyTaskListener">
+		<property name="taskListeners">
+			<list>
+				<bean class="com.xz.activiti.listener.DefaultTaskListener"/>
+				<bean class="com.xz.activiti.listener.TaskCategoryTaskListener"/>
+				<bean class="com.xz.activiti.listener.TaskSignCompleteListener"/>
+			</list>
+		</property>
+	</bean>
+	<!-- 在记录history之后执行的TaskListener -->
+	<bean id="postTaskListener" class="com.xz.activiti.listener.ProxyTaskListener">
+		<property name="taskListeners">
+			<list>
+				<bean class="com.xz.activiti.listener.DefaultTaskListener"/>
+				<bean class="com.xz.activiti.listener.TaskSignCompleteListener"/>
+			</list>
+		</property>
+	</bean>
+	 <!--uuid生成  -->
+	 <bean id="uuidGenerator" class="com.xz.activiti.utils.StrongUuidGenerator"></bean>
+	 
+	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">  
+	    <property name="processEngineConfiguration" ref="processEngineConfiguration" />  
+	</bean>
+	
+	<bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />  
+	<bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />  
+	<bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />  
+	<bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />  
+	<bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+	<bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />
+
+</beans>

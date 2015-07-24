@@ -1,0 +1,71 @@
+@charset "utf-8";
+/* version: 2014-08-11 
+   For:系统登录
+   author:sgpy 
+*/
+body,textarea{font:100 12px/1.5 \5b8b\4f53,Arial,sans-serif;}
+body,form,menu,div,fieldset,blockquote,p,pre,ul,li,ol,dl,dd,h1,h2,h3,h4,h5,h6,input,pre,button,th,td,legend{padding:0;margin:0;}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+address,cite,dfn,em,var{font-style:normal;}
+code,kbd,pre,samp{font-family:courier new,courier,monospace;}
+legend{color:#000;}
+button,input,select,textarea{font-size:100%;vertical-align:middle;} 
+ul,li{list-style:none;}
+fieldset,img{border:none;}
+input[type=radio],input[type=checkbox],button{cursor:pointer;} 
+input:focus{outline:none;}
+table{border-collapse:collapse;border-spacing:0;}
+body{color:#FFF;background:#1370AB;}
+.clearfix:after{content:".";visibility:hidden;display:block;clear:both;height:0;}
+.clearfix{display:inline-block;}
+* html .clearfix{height:1%;}
+.clearfix{display:block;}
+a{color:#036;text-decoration:none;}
+a:hover{text-decoration:underline;}
+/* adorn */
+.field-validation-error{background:url(../img/icon.png) no-repeat;}
+.user_name,.user_paw,.btn_submit{background:url(../img/login_sprite.png) no-repeat;}
+/* share style */
+.mt10{margin-top:10px;}.ml10{margin-left:10px;}.mr10{margin-right:10px;}.mb10{margin-bottom:10px;}
+.mlr5{margin:0 5px;}.mlr10{margin:0 10px;}
+.mt20{margin-top:20px;}.ml20{margin-left:20px;}.mb20{margin-bottom:20px;}.ml100{margin-left:100px;}
+.con_c{margin-right:auto;margin-left:auto;}
+.pt10{padding-top:10px;}.pd5{padding:5px;}.ptb5{padding:5px 0;}.pd10{padding:10px;}.ptb10{padding:10px 0;}
+.pl73{padding-left:73px;}.pl100{padding-left:100px;}.pl120{padding-left:120px;}.pl130{padding-left:130px;}
+.w73{width:73px;}
+.DFl{float:left;}.DFr{float:right;}
+.p_rel{position:relative;}.p_abs{position:absolute;}
+.abs_rt{top:10px;right:10px;}
+.t_l{text-align:left;}.t_r{text-align:right;}.t_c{text-align:center;}
+.dib{display:inline-block;vertical-align:middle;}
+.vm{vertical-align:middle;}
+.fb{font-weight:bold;}.f14{font-size:14px;}.f16{font-size:16px;}
+.show{display:block;}.hid{overflow:hidden;}
+.dn{display:none;}
+.c390{color:#390;}.cf60{color:#F60;}
+.c_hui{color:#999;}.c_blue{color:#39c;}
+.c_red,.red{color:red;}.c_zi{color:#C00;}
+.lab_tit{width:90px;text-align:right;}
+.inp_t{width:200px;height:20px;padding:4px 2px;font:700 16px/20px "verdana";color:#069;background-color:#FFF;border:1px solid #1BC1EB;}
+.short_inp{width:104px;}
+.btn_submit,.btn_reset{cursor:pointer;width:197px;height:98px;font:400 24px/1.8 "Microsoft Yahei";text-align:center;border:none;color:#FFF;background-position:0 0;}
+.btn_reset{color:#FFF;background-position:0 -40px;}.btn_reset:hover{background-position:-90px -40px;}
+.user_name{padding-left:26px;background-position:-178px -110px;}
+.user_paw{padding-left:26px;background-position:-178px -150px;}
+/* main layout */
+.wrap_login{position:relative;zoom:1;width:580px;height:400px;margin:0 auto;padding:140px 180px 160px;background:url(../img/login_bodybg.jpg) no-repeat;}
+.wrap_login h1{font:600 30px/1.8 "Microsoft Yahei";}
+.login_logo{/*position:absolute;left:17px;top:-28px;*/margin-top:15px;text-align:center;}
+.login_list{margin-left:25px;}
+.login_list li{padding:7px 0 0 100px;}
+.login_list .lab_tit{float:left;display:inline;margin:4px 0 0 -100px;}
+.login_list .pl73{padding-left:73px;}
+.login_form{position:relative;zoom:1;height:190px;padding:48px 0 0;font:400 18px/1.2 "Microsoft Yahei";}
+.login_form h2{display:none;}
+.wrap_login .btn_area{position:absolute;top:42px;right:0;width:197px;height:98px;line-height:2;padding:6px 0 0 80px;}
+.t_info{/*position:absolute;top:310px;left:50px;width:550px;*/padding-top:8px;text-align:center;}
+.t_info img{vertical-align:middle;}
+.validation-summary-errors{padding:15px;text-indent:60px;color:#F60;}
+.field-validation-error{display:block;padding-left:20px;font:100 12px/20px "verdana";color:red;background-position:-118px -228px;}
+.v_m{vertical-align:middle;}

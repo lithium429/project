@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Region">  
+	<resultMap id="regionResult" type="Region">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="DECIMAL" />
+		<result column="create_time" property="create_time"  />
+		<result column="type" property="type" jdbcType="DECIMAL" />
+		<result column="parent_id" property="parent_id" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<sql id="sf-region">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="sort != null">
+				and a.sort = #{sort}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="parent_id != null">
+				and a.parent_id = #{parent_id}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.name_valid != null">
+				and a.id !=#{map.id} and a.name =#{map.name_valid}
+				<if test="map.null_parent_id != null">
+				and a.parent_id is null
+				</if>
+				<if test="map.valid_parent_id != null">
+				and a.parent_id = #{map.valid_parent_id}
+				</if>
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+
+	<select id="selectRegion" resultType="Region" parameterType="Region">
+		select a.* from region a
+		<include refid="sf-region" />
+	</select>
+	
+	<select id="selectRegionList" resultType="Region" parameterType="Region">
+		select a.* from region a
+		<include refid="sf-region" />
+	</select>
+	
+	<select id="selectRegionCount" resultType="int" parameterType="Region">
+		select count(1) from region a
+		<include refid="sf-region" />
+	</select>
+	
+	<select id="selectRegionPageList" resultType="Region" parameterType="Region">
+		select a.* from region a
+		<include refid="sf-region" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectRegionSort" resultType="int" parameterType="Region">
+		select max(a.sort) from region a
+		<include refid="sf-region" />
+	</select>
+
+	<insert id="insertRegion" parameterType="Region" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into region (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="sort != null">sort,</if> 
+			<if test="create_time != null">create_time,</if> 
+			<if test="type != null">type,</if> 
+			<if test="parent_id != null">parent_id,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="sort != null">#{sort},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+			<if test="type != null">#{type},</if> 
+			<if test="parent_id != null">#{parent_id},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateRegion" parameterType="Region">
+		update region
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="sort != null">sort=#{sort},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="type != null">type=#{type},</if>
+			<if test="parent_id != null">parent_id=#{parent_id},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteRegion" parameterType="Region">
+		delete from region 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

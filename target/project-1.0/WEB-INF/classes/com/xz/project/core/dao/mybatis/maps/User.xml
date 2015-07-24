@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.User">   
+    
+   <resultMap id="userResult" type="User">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="salt" property="salt" jdbcType="VARCHAR" />
+		<result column="real_name" property="real_name" jdbcType="VARCHAR" />
+		<result column="dept_id" property="dept_id" jdbcType="DECIMAL" />
+		<result column="is_allowso" property="is_allowso" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="DECIMAL" />
+		<result column="mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="sex" property="sex" jdbcType="DECIMAL" />
+		<result column="qq" property="qq" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="create_time" property="create_time" jdbcType="DATE" />
+		<result column="dept_name" property="dept_name" jdbcType="VARCHAR" />
+		<result column="is_first_login" property="is_first_login" jdbcType="VARCHAR" />
+		<result column="is_reseted_psw" property="is_reseted_psw" jdbcType="VARCHAR" />
+		<result column="has_address" property="has_address" jdbcType="VARCHAR" />
+		<result column="des_password" property="des_password" jdbcType="VARCHAR" />
+		<result column="fname" property="fname" jdbcType="VARCHAR" />
+		<result column="pname" property="pname" jdbcType="VARCHAR" />
+    </resultMap>
+       
+    <resultMap id="userResultWithRoles" type="User" extends="userResult">
+		<collection property="roles" resultMap="userRoleResult" />
+    </resultMap> 
+
+	<resultMap id="userRoleResult" type="UserRole">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="user_id" property="user_id" jdbcType="DECIMAL" />
+		<result column="role_id" property="role_id" jdbcType="DECIMAL" />
+		<result column="role_name" property="role_name" jdbcType="VARCHAR" />
+		<result column="is_super" property="is_super" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="sf-user-order">
+    	<include refid="sf-user" />
+		<if test="map.sort != null">
+			order by a.id desc
+		</if>
+	</sql>
+    
+	<sql id="sf-user">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="fname != null">
+				and a.fname = #{fname}
+			</if>
+			<if test="pname != null">
+				and a.pname = #{pname}
+			</if>
+			<if test="password != null">
+				and a.password = #{password}
+			</if>
+			<if test="salt != null">
+				and a.salt = #{salt}
+			</if>
+			<if test="real_name != null">
+				and a.real_name = #{real_name}
+			</if>
+			<if test="dept_id != null">
+				and a.dept_id = #{dept_id}
+			</if> 
+			<if test="is_allowso != null">
+				and a.is_allowso = #{is_allowso}
+			</if>
+			<if test="is_first_login != null">
+				and a.is_first_login = #{is_first_login}
+			</if>
+			<if test="is_reseted_psw != null">
+				and a.is_reseted_psw = #{is_reseted_psw}
+			</if>
+			<if test="has_address != null">
+				and a.has_address = #{has_address}
+			</if>
+			<if test="state != null">
+				and a.state = #{state}
+			</if>
+			<if test="mobile != null">
+				and a.mobile = #{mobile}
+			</if>
+			<if test="email != null">
+				and a.email = #{email}
+			</if>
+			<if test="sex != null">
+				and a.sex = #{sex}
+			</if>
+			<if test="qq != null">
+				and a.qq = #{qq}
+			</if>
+			<if test="remark != null">
+				and a.remark = #{remark}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="map.id_vaild != null">
+				and a.id is not null
+			</if>
+			<if test="map.not_my_id != null">
+				and a.id != #{map.not_my_id}
+			</if>
+			<if test="map.name != null">
+				and a.name like concat('%',#{map.name},'%')
+			</if>
+			<if test="map.real_name != null">
+				and a.real_name like concat('%',#{map.real_name},'%')
+			</if>
+			<if test="map.key != null">
+				and (a.name like concat('%',#{map.key},'%') or a.real_name like concat('%',#{map.key},'%'))
+			</if>
+			<if test="map.name_valid != null">
+				and a.id !=#{map.id} and a.name =#{map.name}
+			</if>
+			<if test="map.dept_id != null">
+				and (a.dept_id = #{map.dept_id} or d.parent_id = #{map.dept_id})
+			</if> 
+			<if test="map.dept_ids != null">
+				and a.dept_id in
+				<foreach collection="map.dept_ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+			<if test="map.role_ids != null">
+				and b.role_id in
+				<foreach collection="map.role_ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+			<if test="map.role_id != null">
+				and b.role_id=#{map.role_id}
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+
+	<select id="selectUser" resultMap="userResultWithRoles" parameterType="User">
+		select a.*,b.role_id,b.user_id,c.name as role_name,c.is_super as is_super,d.name as dept_name from user a left join user_role b on a.id=b.user_id left join role c on b.role_id=c.id
+		left join department d on a.dept_id = d.id
+		<include refid="sf-user" />
+	</select>
+	
+	<select id="selectUserList" resultType="User" parameterType="User">
+		select a.* from user a left join department d on a.dept_id=d.id
+		<include refid="sf-user-order" />
+	</select>
+	
+	<select id="selectUserListWithRoles" resultMap="userResultWithRoles" parameterType="User">
+		select a.*,b.role_id,b.user_id,c.name as role_name,c.is_super as is_super,d.name as dept_name from user a left join user_role b on a.id=b.user_id left join role c on b.role_id=c.id
+		left join department d on a.dept_id = d.id
+		<include refid="sf-user-order" />
+	</select>
+	
+	<select id="selectUserCount" resultType="int" parameterType="User">
+		select count(1) from (select count(1) from user a left join user_role b on a.id=b.user_id left join role c on b.role_id=c.id
+		left join department d on a.dept_id=d.id 
+		<include refid="sf-user" />
+		group by a.id) as t
+	</select>
+	
+	<select id="selectUserPageList" resultMap="userResultWithRoles" parameterType="User">
+		select a.*,b.role_id,b.user_id,c.name as role_name,c.is_super as is_super  from (select t.* from(select a.*,d.name as dept_name from user a left join user_role b on a.id=b.user_id left join role c on b.role_id=c.id
+		left join department d on a.dept_id=d.id 
+		<include refid="sf-user" />
+		group by a.id) as t order by t.id desc
+		limit #{map.startIndex},#{map.pageSize}) as a left join user_role b on a.id=b.user_id left join role c on b.role_id=c.id 
+	</select>
+	
+	<select id="selectUserSort" resultType="int" parameterType="User">
+		select max(a.id) from user a
+		<include refid="sf-user" />
+	</select>
+
+	<insert id="insertUser" parameterType="User" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into user (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="password != null">password,</if> 
+			<if test="salt != null">salt,</if> 
+			<if test="real_name != null">real_name,</if> 
+			<if test="dept_id != null">dept_id,</if> 
+			<if test="is_allowso != null">is_allowso,</if> 
+			<if test="is_first_login != null">is_first_login,</if> 
+			<if test="is_reseted_psw != null">is_reseted_psw,</if> 
+			<if test="has_address != null">has_address,</if> 
+			<if test="state != null">state,</if> 
+			<if test="mobile != null">mobile,</if> 
+			<if test="email != null">email,</if> 
+			<if test="sex != null">sex,</if> 
+			<if test="qq != null">qq,</if> 
+			<if test="remark != null">remark,</if> 
+			<if test="create_time != null">create_time,</if> 
+			<if test="des_password != null">des_password,</if> 
+			<if test="pname != null">pname,</if> 
+			<if test="fname != null">fname,</if>  
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="password != null">#{password},</if> 
+			<if test="salt != null">#{salt},</if> 
+			<if test="real_name != null">#{real_name},</if> 
+			<if test="dept_id != null">#{dept_id},</if> 
+			<if test="is_allowso != null">#{is_allowso},</if> 
+			<if test="is_first_login != null">#{is_first_login},</if> 
+			<if test="is_reseted_psw != null">#{is_reseted_psw},</if> 
+			<if test="has_address != null">#{has_address},</if> 
+			<if test="state != null">#{state},</if> 
+			<if test="mobile != null">#{mobile},</if> 
+			<if test="email != null">#{email},</if> 
+			<if test="sex != null">#{sex},</if> 
+			<if test="qq != null">#{qq},</if> 
+			<if test="remark != null">#{remark},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+			<if test="des_password != null">#{des_password},</if> 
+			<if test="pname != null">#{pname},</if> 
+			<if test="fname != null">#{fname},</if>  
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateUser" parameterType="User">
+		update user
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="pname != null">pname=#{pname},</if>
+			<if test="fname != null">fname=#{fname},</if>
+			<if test="password != null">password=#{password},</if>
+			<if test="salt != null">salt=#{salt},</if>
+			<if test="real_name != null">real_name=#{real_name},</if>
+			<if test="dept_id != null">dept_id=#{dept_id},</if>
+			<if test="is_allowso != null">is_allowso=#{is_allowso},</if>
+			<if test="is_first_login != null">is_first_login=#{is_first_login},</if>
+			<if test="is_reseted_psw != null">is_reseted_psw=#{is_reseted_psw},</if>
+			<if test="has_address != null">has_address=#{has_address},</if>
+			<if test="state != null">state=#{state},</if>
+			<if test="mobile != null">mobile=#{mobile},</if>
+			<if test="email != null">email=#{email},</if>
+			<if test="sex != null">sex=#{sex},</if>
+			<if test="qq != null">qq=#{qq},</if>
+			<if test="remark != null">remark=#{remark},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="des_password != null">des_password=#{des_password},</if> 
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteUser" parameterType="User">
+		delete from user 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>

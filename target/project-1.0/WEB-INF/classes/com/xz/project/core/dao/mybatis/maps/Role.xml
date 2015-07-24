@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="entity.Role">  
+	<resultMap id="roleResult" type="Role">
+		<result column="id" property="id" jdbcType="DECIMAL" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="DECIMAL" />
+		<result column="create_time" property="create_time" jdbcType="DATE" />
+		<result column="is_super" property="is_super" jdbcType="VARCHAR" />
+		<result column="role_id" property="role_id" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<sql id="sf-role">
+		<where>
+			<if test="id != null">
+				and a.id = #{id}
+			</if>
+			<if test="name != null">
+				and a.name = #{name}
+			</if>
+			<if test="sort != null">
+				and a.sort = #{sort}
+			</if>
+			<if test="create_time != null">
+				and a.create_time = #{create_time}
+			</if>
+			<if test="is_super != null">
+				and a.is_super = #{is_super}
+			</if>
+			<if test="role_id != null">
+				and a.role_id = #{role_id}
+			</if>
+			<if test="map.keyword != null">
+				and a.keyword like concat('%',#{map.keyword},'%')
+			</if>
+			<if test="map.name_valid != null">
+				and a.id !=#{map.id} and a.name =#{map.name}
+			</if>
+			<if test="map.ids != null">
+				and a.id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<if test="map.sort_order != null">
+			order by a.sort desc
+		</if>
+	</sql>
+
+	<select id="selectRole" resultType="Role" parameterType="Role">
+		select a.* from role a
+		<include refid="sf-role" />
+	</select>
+	
+	<select id="selectRoleList" resultType="Role" parameterType="Role">
+		select a.* from role a
+		<include refid="sf-role" />
+	</select>
+	
+	<select id="selectRoleCount" resultType="int" parameterType="Role">
+		select count(1) from role a
+		<include refid="sf-role" />
+	</select>
+	
+	<select id="selectRolePageList" resultType="Role" parameterType="Role">
+		select a.* from role a
+		<include refid="sf-role" />
+		limit #{map.startIndex},#{map.pageSize}
+	</select>
+	
+	<select id="selectRoleSort" resultType="int" parameterType="Role">
+		select max(a.sort) from role a
+		<include refid="sf-role" />
+	</select>
+
+	<insert id="insertRole" parameterType="Role" useGeneratedKeys="true"
+		keyProperty="id"> 
+		<![CDATA[insert into role (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">id,</if> 
+			<if test="name != null">name,</if> 
+			<if test="sort != null">sort,</if> 
+			<if test="create_time != null">create_time,</if> 
+			<if test="is_super != null">is_super,</if> 
+			<if test="role_id != null">role_id,</if> 
+		</trim>
+		<![CDATA[) values (]]>
+		<trim suffixOverrides=",">  
+			<if test="id != null">#{id},</if> 
+			<if test="name != null">#{name},</if> 
+			<if test="sort != null">#{sort},</if> 
+			<if test="create_time != null">#{create_time},</if> 
+			<if test="is_super != null">#{is_super},</if> 
+			<if test="role_id != null">#{role_id},</if> 
+		</trim>
+		<![CDATA[)]]>
+	</insert>
+
+	<update id="updateRole" parameterType="Role">
+		update role
+		<set>
+			<if test="name != null">name=#{name},</if>
+			<if test="sort != null">sort=#{sort},</if>
+			<if test="create_time != null">create_time=#{create_time},</if>
+			<if test="is_super != null">is_super=#{is_super},</if>
+			<if test="role_id != null">role_id=#{role_id},</if>
+		</set>
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deleteRole" parameterType="Role">
+		delete from role 
+		<where>
+			<if test="id != null">
+				and id = #{id}
+			</if>
+			<if test="map.ids != null">
+				and id in
+				<foreach collection="map.ids" open="(" separator="," close=")"
+					index="index" item="item">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+</mapper>
